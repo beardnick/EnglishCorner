@@ -13,10 +13,12 @@ import com.stfalcon.chatkit.messages.MessageHolders;
  */
 
 public class MyOutComingHolder extends MessageHolders.OutcomingTextMessageViewHolder<Message>{
-
     private static final String TAG = "MyOutComingHolder";
+    private LanguageToolUtil checker;
     public MyOutComingHolder(View itemView) {
         super(itemView);
+        checker = new LanguageToolUtil();
+
     }
 
     @Override
@@ -24,13 +26,12 @@ public class MyOutComingHolder extends MessageHolders.OutcomingTextMessageViewHo
         super.onBind(message);
         if(message.getText().length() > 0){
             Log.i(TAG, "onBind: " + message.getText());
-            LanguageToolUtil checker = new LanguageToolUtil(message.getText() , new LanguageToolUtil.OnCheckMessageListener() {
+            checker.checkMessage(message.getText() , new LanguageToolUtil.OnCheckMessageListener() {
                 @Override
                 public void onSuccess(SpannableString span) {
                     text.setText(span);
                 }
             });
-            checker.checkMessage();
         }
     }
 }

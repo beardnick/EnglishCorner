@@ -16,6 +16,7 @@ import com.stfalcon.chatkit.messages.MessageHolders;
 public class MyIncomingHolder extends MessageHolders.IncomingTextMessageViewHolder<Message> {
 
     private static final String TAG = "MyIncomingHolder";
+    private LanguageToolUtil checker = new LanguageToolUtil();
     public MyIncomingHolder(View itemView) {
         super(itemView);
     }
@@ -25,7 +26,7 @@ public class MyIncomingHolder extends MessageHolders.IncomingTextMessageViewHold
         super.onBind(message);
         if(message.getText().length() > 0){
             Log.i(TAG, "onBind: " + message.getText());
-            LanguageToolUtil checker = new LanguageToolUtil(message.getText() , new LanguageToolUtil.OnCheckMessageListener() {
+             checker.checkMessage(message.getText() , new LanguageToolUtil.OnCheckMessageListener() {
                 @Override
                 public void onSuccess(final SpannableString span) {
                     message.getContext().runOnUiThread(new Runnable() {
@@ -36,7 +37,6 @@ public class MyIncomingHolder extends MessageHolders.IncomingTextMessageViewHold
                     });
                 }
             });
-            checker.checkMessage();
         }
     }
 }

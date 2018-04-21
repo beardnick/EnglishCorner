@@ -35,12 +35,33 @@ public class LanguageToolUtil {
     public static final String SEVER_URL = "https://languagetool.org/api/v2/check";
     public static final String ENGLISH = "en-US";
     private static final String TAG = "LanguageToolUtil";
-    private OnCheckMessageListener listener;
-    private String message;
+    HttpURLConnection connection;
+    private boolean isConnected = false;
 
-    public LanguageToolUtil(String message , OnCheckMessageListener listener) {
-        this.listener = listener;
-        this.message = message;
+
+    public LanguageToolUtil() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.i(TAG, "try to connect languagetool");
+                    StringBuilder urlBuilder = new StringBuilder("");
+                    urlBuilder.append(SEVER_URL);
+                    urlBuilder.append(buildParamenter("?", "sessionID", "12352"));
+                    URL url = new URL(urlBuilder.toString());
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setConnectTimeout(8000);
+                }catch (MalformedURLException e){
+                    isConnected = false;
+                    e.printStackTrace();
+                }catch (IOException e){
+                    e.printStackTrace();
+                    isConnected = false;
+                }
+                isConnected = true;
+            }
+        }).start();
     }
 
     private String buildURL(String language , String text){
@@ -64,19 +85,13 @@ public class LanguageToolUtil {
         return sb.toString();
     }
 
-        public void checkMessage(){
+        public void checkMessage(final String message , final OnCheckMessageListener listener){
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    HttpURLConnection connection = null;
                     try {
-                        StringBuilder urlBuilder = new StringBuilder("");
-                        urlBuilder.append(SEVER_URL);
-                        urlBuilder.append(buildParamenter("?" , "sessionID" , "12352"));
-                        URL url = new URL(urlBuilder.toString());
-                        connection = (HttpURLConnection) url.openConnection();
-                        connection.setRequestMethod("POST");
-                        connection.setConnectTimeout(8000);
+                        while(! isConnected){
+                        }
                         DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
                         outputStream.writeBytes(buildURL("en", String.valueOf(message)));
                         outputStream.flush();
