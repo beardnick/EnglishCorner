@@ -1,5 +1,6 @@
 package com.example.qianz.englishcorner.model;
 
+import android.app.Activity;
 import android.text.SpannableString;
 
 import com.stfalcon.chatkit.commons.models.IMessage;
@@ -13,14 +14,15 @@ import java.util.Date;
 
 public class Message implements IMessage{
 
-    private SpannableString span;
     private Author author;
     private String text;
     private Date createAt;
+    private Activity context;
 
-    public Message(Author author, String text) {
+    public Message(Author author, String text , Activity activity) {
         this.author = author;
         this.text = text;
+        this.context = activity;
         this.createAt = new Date();
 
     }
@@ -45,11 +47,11 @@ public class Message implements IMessage{
         return createAt;
     }
 
-    public SpannableString getSpan() {
-        return span;
+    public Activity getContext() {
+        return context;
     }
 
-    public void setSpan(SpannableString span) {
-        this.span = span;
+    public void setContext(Activity context) {
+        this.context = context;
     }
 }

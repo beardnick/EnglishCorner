@@ -1,7 +1,16 @@
 package com.example.qianz.englishcorner.util;
 
 import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.SubscriptSpan;
 import android.util.Log;
+
+import com.example.qianz.englishcorner.model.Message;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 /**
  * Created by qianz on 2018/4/20.
@@ -37,6 +47,7 @@ public class LanguageToolUtil {
         StringBuilder sb = new StringBuilder("");
         sb.append(buildParamenter("&","language" , language));
         sb.append(buildParamenter("&","text" , text));
+        Log.i(TAG, "buildURL: " + sb.toString());
         return sb.toString();
     }
 
@@ -78,7 +89,14 @@ public class LanguageToolUtil {
                         while ((line = reader.readLine()) != null) {
                             response.append(line);
                         }
+                        ArrayList<Suggestion> suggestions = getSuggestions(response.toString());
                         SpannableString span = new SpannableString(message);
+                        for (Suggestion s:suggestions
+                             ) {
+                            span.setSpan(new RoundBackgroundColorSpan() ,
+                                    s.getBeg() , s.getEnd() ,
+                                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                        }
                         listener.onSuccess(span);
                         Log.i(TAG, "Response:" + response);
                     } catch (MalformedURLException e) {
@@ -87,6 +105,40 @@ public class LanguageToolUtil {
                         e.printStackTrace();
                     }
                 }
-            });
+            }).start();
+        }
+
+        public ArrayList<Suggestion> getSuggestions(String jsonString){
+            Log.i(TAG, "jsonString: " + jsonString);
+            ArrayList<Suggestion> suggestions = new ArrayList<>();
+            JSONObject json = null;
+            JSONArray matches = null;
+            try {
+                json = new JSONObject(jsonString);
+                matches = json.getJSONArray("matches");
+                for (int i = 0; i < matches.length(); i++) {
+                    JSONObject matche = matches.getJSONObject(i);
+                    Suggestion s = new Suggestion(
+                            matche.getInt("offset"),
+                            matche.getInt("length") + matche.getInt("offset"),
+                            matche.getString("message")
+                    );
+                    JSONArray replacement = matche.getJSONArray("replacements");
+                    for (int r = 0; r < replacement.length(); r++) {
+                        s.addReplacement(replacement.getJSONObject(r).getString("value"));
+                    }
+                    suggestions.add(s);
+                }
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+            for (Suggestion s: suggestions
+                 ) {
+                Log.i(TAG, "getSuggestions:" +
+                " start : " + s.getBeg() +
+                " end : "  + s.getEnd() +
+                " message : " + s.getErro());
+            }
+            return suggestions;
         }
 }

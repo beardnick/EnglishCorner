@@ -1,5 +1,7 @@
 package com.example.qianz.englishcorner.util;
 
+import java.util.ArrayList;
+
 /**
  * Created by qianz on 2018/4/20.
  */
@@ -7,11 +9,19 @@ package com.example.qianz.englishcorner.util;
 public class Suggestion {
 
     private int beg;
-    private int len;
+    private int end;
+    private String erro;
+    private ArrayList<String> replacement;
 
-    public Suggestion(int beg, int len) {
+    public Suggestion(int beg, int end , String erroMessage) {
         this.beg = beg;
-        this.len = len;
+        this.end = end;
+        this.erro = erroMessage;
+        replacement = new ArrayList<>();
+    }
+
+    public void addReplacement(String replace){
+        replacement.add(replace);
     }
 
     public int getBeg() {
@@ -22,11 +32,23 @@ public class Suggestion {
         this.beg = beg;
     }
 
-    public int getLen() {
-        return len;
+    public int getEnd() {
+        return end;
     }
 
-    public void setLen(int len) {
-        this.len = len;
+    public void setEnd(int end) {
+        this.end = end;
+    }
+
+    public String getErro() {
+        return erro;
+    }
+
+    public void setErro(String erro) {
+        this.erro = erro;
+    }
+
+    public ArrayList<String> getReplacement() {
+        return replacement;
     }
 }

@@ -1,35 +1,36 @@
-package com.example.qianz.englishcorner.customer;
+package com.example.qianz.englishcorner.custom;
 
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.View;
 
+import com.example.qianz.englishcorner.model.Message;
 import com.example.qianz.englishcorner.util.LanguageToolUtil;
-import com.example.qianz.englishcorner.util.Suggestion;
-import com.stfalcon.chatkit.commons.models.IMessage;
 import com.stfalcon.chatkit.messages.MessageHolders;
 
-import java.util.ArrayList;
-
 /**
- * Created by qianz on 2018/4/20.
+ * Created by qianz on 2018/4/21.
  */
 
-public class MyIncomingHolder extends MessageHolders.IncomingTextMessageViewHolder {
+public class MyOutComingHolder extends MessageHolders.OutcomingTextMessageViewHolder<Message>{
 
-    public MyIncomingHolder(View itemView) {
+    private static final String TAG = "MyOutComingHolder";
+    public MyOutComingHolder(View itemView) {
         super(itemView);
     }
 
     @Override
-    public void onBind(IMessage message) {
+    public void onBind(Message message) {
         super.onBind(message);
         if(message.getText().length() > 0){
+            Log.i(TAG, "onBind: " + message.getText());
             LanguageToolUtil checker = new LanguageToolUtil(message.getText() , new LanguageToolUtil.OnCheckMessageListener() {
                 @Override
                 public void onSuccess(SpannableString span) {
                     text.setText(span);
                 }
             });
+            checker.checkMessage();
         }
     }
 }
