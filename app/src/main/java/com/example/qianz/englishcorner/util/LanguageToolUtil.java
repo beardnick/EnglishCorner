@@ -29,7 +29,7 @@ import java.util.ArrayList;
 public class LanguageToolUtil {
 
     public interface OnCheckMessageListener{
-        public void onSuccess(SpannableString span);
+        public void onSuccess(ArrayList<Suggestion> suggestions);
     }
 
     public static final String SEVER_URL = "https://languagetool.org/api/v2/check";
@@ -104,15 +104,7 @@ public class LanguageToolUtil {
                         while ((line = reader.readLine()) != null) {
                             response.append(line);
                         }
-                        ArrayList<Suggestion> suggestions = getSuggestions(response.toString());
-                        SpannableString span = new SpannableString(message);
-                        for (Suggestion s:suggestions
-                             ) {
-                            span.setSpan(new RoundBackgroundColorSpan() ,
-                                    s.getBeg() , s.getEnd() ,
-                                    Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                        }
-                        listener.onSuccess(span);
+                        listener.onSuccess(getSuggestions(response.toString()));
                         Log.i(TAG, "Response:" + response);
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
