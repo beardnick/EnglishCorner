@@ -1,6 +1,7 @@
 package com.example.qianz.englishcorner.model;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.BmobUser;
 
 /**
  * Created by qianz on 2018/4/22.
@@ -8,22 +9,27 @@ import cn.bmob.v3.BmobObject;
 
 public class Friend extends BmobObject {
 
-    private String user;
-    private String friend;
+    private Author user;
+    private Author friend;
 
-    public String getUser() {
+    public Friend(Author user, Author friend) {
+        this.user = user;
+        this.friend = friend;
+    }
+
+    public Author getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(Author user) {
         this.user = user;
     }
 
-    public String getFriend() {
+    public Author getFriend() {
         return friend;
     }
 
-    public void setFriend(String friend) {
+    public void setFriend(Author friend) {
         this.friend = friend;
     }
 }
