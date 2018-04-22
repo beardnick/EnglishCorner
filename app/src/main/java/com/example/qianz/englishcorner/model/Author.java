@@ -12,23 +12,17 @@ import cn.bmob.v3.datatype.BmobFile;
 public class Author extends BmobUser implements IUser {
 
     private String id;
-    private String avatar;
     // TODO: 2018/4/22 完成Author类的头像操作
-    private BmobFile avatarFile;
+    private BmobFile avatar;
 
-    public Author(){
-
-    }
-
-    public Author(String id, String name, String avatar) {
+    public Author(String id, String name) {
         this.id = id;
         this.setUsername(name);
-        this.avatar = avatar;
     }
 
     @Override
     public String getId() {
-        return id;
+        return getObjectId();
     }
 
     @Override
@@ -38,6 +32,14 @@ public class Author extends BmobUser implements IUser {
 
     @Override
     public String getAvatar() {
-        return avatar;
+        if(avatar != null){
+            return avatar.getFileUrl();
+        }else {
+            return null;
+        }
+    }
+
+    public void setAvatar(BmobFile file){
+        avatar = file;
     }
 }
