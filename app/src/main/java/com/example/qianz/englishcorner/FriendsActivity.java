@@ -96,13 +96,6 @@ public class FriendsActivity extends AppCompatActivity {
                 }
             }
         });
-        BmobQuery<Author> authorQuery = new BmobQuery<>();
-        authorQuery.getObject("1b8f69ea0d", new QueryListener<Author>() {
-            @Override
-            public void done(Author author, BmobException e) {
-                Log.i(TAG, "test : " + author.getName() + author.getObjectId() + author.getCreatedAt());
-            }
-        });
     }
 
 }

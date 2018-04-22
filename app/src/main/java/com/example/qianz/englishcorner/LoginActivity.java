@@ -132,6 +132,10 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 }else {
+                    registerPass.setError("different from the second written");
+                    registerPass.setErrorEnabled(true);
+                    registerPassRep.setError("different from the first written");
+                    registerPassRep.setErrorEnabled(true);
                     Toast.makeText(LoginActivity.this, "two passwords are different", Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "pass : " + stringUtil(registerPass) + "\npassrep : " + stringUtil(registerPassRep));
                 }
