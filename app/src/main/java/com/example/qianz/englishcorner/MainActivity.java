@@ -9,12 +9,21 @@ import com.example.qianz.englishcorner.custom.MyIncomingHolder;
 import com.example.qianz.englishcorner.custom.MyOutComingHolder;
 import com.example.qianz.englishcorner.model.Author;
 import com.example.qianz.englishcorner.model.Message;
+import com.example.qianz.englishcorner.util.MessageHandler;
 import com.squareup.picasso.Picasso;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessageInput;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+import cn.bmob.newim.BmobIM;
 
 public class MainActivity extends AppCompatActivity implements MessageInput.InputListener {
 

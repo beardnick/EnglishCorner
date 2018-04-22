@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.widgets.Rectangle;
 import android.text.style.ReplacementSpan;
 
 /**

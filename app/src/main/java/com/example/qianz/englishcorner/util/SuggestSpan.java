@@ -32,8 +32,8 @@ public class SuggestSpan extends ClickableSpan {
         View contextView = LayoutInflater.from(context).inflate(R.layout.suggestion_dialog , null);
         TextView errorMessage = (TextView) contextView.findViewById(R.id.erro_message);
         TextView replacements = (TextView) contextView.findViewById(R.id.replacements);
-        errorMessage.setTypeface(Typeface.createFromAsset(context.getAssets() , "fonts/Rosario-BoldItalic.ttf"));
-        replacements.setTypeface(Typeface.createFromAsset(context.getAssets() , "fonts/Rosario-BoldItalic.ttf"));
+        errorMessage.setTypeface(Typeface.createFromAsset(context.getAssets() , "fonts/Rosario-Bold.ttf"));
+        replacements.setTypeface(Typeface.createFromAsset(context.getAssets() , "fonts/Rosario-Bold.ttf"));
         errorMessage.setText(suggestion.getErro());
         StringBuilder sb = new StringBuilder();
         for (String s: suggestion.getReplacement()

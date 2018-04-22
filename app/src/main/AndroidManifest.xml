@@ -8,6 +8,24 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!--网络权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 监听网络的变化 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <!-- 设备休眠 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- sd卡存储-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!--摄像头-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!--录音-->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!--通知震动-->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
 
     <application
         android:allowBackup="true"
@@ -16,6 +34,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="Bmob_APP_KEY"
+            android:value="f24de67fcc9a6a61f657dbaffd12c931" />
+
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
@@ -25,6 +47,24 @@
             </intent-filter>
         </activity>
         <activity android:name=".FriendsActivity"></activity>
+        <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver" >
+            <intent-filter>
+                <action android:name="cn.bmob.action.RECONNECT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="cn.bmob.newim.core.service.BmobIMService"
+            android:process=":bmobcore" />
+        <service
+            android:name="cn.bmob.newim.core.service.NotifyService"
+            android:process=":bmobcore" />
+        <service android:name="cn.bmob.newim.core.service.ReConnectService" />
+        <service android:name="cn.bmob.newim.core.service.HeartBeatService" />
     </application>
+
+
 
 </manifest>
