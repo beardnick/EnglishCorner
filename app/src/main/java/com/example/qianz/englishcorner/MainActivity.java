@@ -25,6 +25,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.core.BmobIMClient;
+import cn.bmob.newim.listener.ConnectListener;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
     private ImageLoader loader;
     private Author user;
     private Author friend;
+    private final BmobIM bmobIM = BmobIM.getInstance();
+    private BmobIMConversation manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,16 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
         oninitData();
         initAdapter();
         onInitEvent();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        BmobIM bmobIM = BmobIM.getInstance();
+//        BmobIMConversation conversation = bmobIM.startPrivateConversation(bmobIM.getUserInfo(friend.getObjectId()) , false ,null);
+//        BmobIMConversation manager = BmobIMConversation.obtain(BmobIMClient.getInstance() , conversation);
+//        manager.getConversationIcon();
+
     }
 
     public void onInitView(){
@@ -63,12 +78,26 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
             public void done(Author author, BmobException e) {
                 if(e == null){
                     friend = author;
+                    BmobIMConversation conversation = bmobIM.startPrivateConversation(bmobIM.getUserInfo(friend.getObjectId()) , false , null);
+                    manager = BmobIMConversation.obtain(BmobIMClient.getInstance() , conversation);
                 }else {
                     Log.i(TAG, "done: " + e.getMessage());
                 }
             }
         });
         user = BmobUser.getCurrentUser(Author.class);
+        if(user.getObjectId().length() > 0){
+            BmobIM.connect(user.getObjectId(), new ConnectListener() {
+                @Override
+                public void done(String s, BmobException e) {
+                    if (e == null) {
+                        Log.i(TAG, "done: 连接成功");
+                    }else {
+                        Log.i(TAG, "done: " + e.getMessage());
+                    }
+                }
+            });
+        }
     }
 
     public void initAdapter(){
