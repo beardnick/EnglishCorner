@@ -8,9 +8,10 @@
     android:layout_height="match_parent"
     tools:context="com.example.qianz.englishcorner.FriendsActivity">
 
-  <FrameLayout
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -24,8 +25,9 @@
         android:id="@+id/dialog_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
         />
-  </FrameLayout>
+  </RelativeLayout>
 
   <android.support.design.widget.NavigationView
       android:id="@+id/nav_view"
