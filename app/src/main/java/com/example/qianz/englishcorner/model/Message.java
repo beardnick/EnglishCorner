@@ -26,6 +26,13 @@ public class Message implements IMessage{
         createAt = new Date();
     }
 
+    public Message(Author author , String text , Date date , Activity activity){
+        this.author = author;
+        this.text = text;
+        this.context = activity;
+        createAt = date;
+    }
+
     public Message(Author author, String text) {
         this.author = author;
         this.text = text;

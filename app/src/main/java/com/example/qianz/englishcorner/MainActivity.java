@@ -1,6 +1,7 @@
 package com.example.qianz.englishcorner;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,17 +24,28 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMConversation;
+import cn.bmob.newim.bean.BmobIMMessage;
+import cn.bmob.newim.bean.BmobIMTextMessage;
+import cn.bmob.newim.bean.BmobIMUserInfo;
 import cn.bmob.newim.core.BmobIMClient;
+import cn.bmob.newim.event.MessageEvent;
 import cn.bmob.newim.listener.ConnectListener;
+import cn.bmob.newim.listener.ConversationListener;
+import cn.bmob.newim.listener.MessageListHandler;
+import cn.bmob.newim.listener.MessagesQueryListener;
+import cn.bmob.v3.BmobInstallation;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
 
-public class MainActivity extends AppCompatActivity implements MessageInput.InputListener {
+public class MainActivity extends AppCompatActivity implements MessageInput.InputListener , MessageListHandler {
 
     private static final String TAG = "MainActivity";
     private MessagesList messageList;
@@ -71,33 +83,68 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
     }
 
     public void oninitData(){
+        user = BmobUser.getCurrentUser(Author.class);
         Intent intent = getIntent();
         BmobQuery<Author> query = new BmobQuery<>();
-        query.getObject(intent.getStringExtra("objectid"), new QueryListener<Author>() {
+        Log.i(TAG, "friend id : " + intent.getStringExtra("objectid"));
+        String objectid = intent.getStringExtra("objectid");
+        query.getObject(objectid, new QueryListener<Author>() {
             @Override
             public void done(Author author, BmobException e) {
                 if(e == null){
                     friend = author;
-                    BmobIMConversation conversation = bmobIM.startPrivateConversation(bmobIM.getUserInfo(friend.getObjectId()) , false , null);
+//                    adapter.addToStart(new Message(friend , "hello" , MainActivity.this) , true);
+                    bmobIM.getUserInfo(friend.getObjectId());
+                    BmobIMConversation conversation = bmobIM.startPrivateConversation(
+                            BmobIM.getInstance().getUserInfo(friend.getObjectId()),
+                            false,
+                            new ConversationListener() {
+                        @Override
+                        public void done(BmobIMConversation bmobIMConversation, BmobException e) {
+                            if(e == null){
+
+                                Log.i(TAG, "会话连接成功");
+                            }else {
+                                Log.i(TAG, "会话连接失败" + e.getMessage());
+                            }
+                        }
+                    });
                     manager = BmobIMConversation.obtain(BmobIMClient.getInstance() , conversation);
+                    manager.queryMessages(null, 10, new MessagesQueryListener() {
+                        @Override
+                        public void done(List<BmobIMMessage> list, BmobException e) {
+                            if(e == null){
+                                ArrayList<Message> msgs = new ArrayList<>();
+                                for (BmobIMMessage msg: list
+                                     ) {
+                                    if(msg.getBmobIMUserInfo().getUserId().equals(friend.getObjectId())){
+                                        msgs.add(new Message(friend , msg.getContent() , new Date(msg.getCreateTime()) ,  MainActivity.this));
+                                    }else {
+                                        msgs.add(new Message(user , msg.getContent() , new Date(msg.getCreateTime()) ,  MainActivity.this));
+                                    }
+                                }
+                                adapter.addToEnd(msgs , true);
+                            }else {
+                                Log.i(TAG, "query to build message conversation : " + e.getMessage());
+                            }
+                        }
+                    });
                 }else {
-                    Log.i(TAG, "done: " + e.getMessage());
+                    Log.i(TAG, "query for friend : " + e.getMessage());
                 }
             }
         });
-        user = BmobUser.getCurrentUser(Author.class);
-        if(user.getObjectId().length() > 0){
-            BmobIM.connect(user.getObjectId(), new ConnectListener() {
-                @Override
-                public void done(String s, BmobException e) {
-                    if (e == null) {
-                        Log.i(TAG, "done: 连接成功");
-                    }else {
-                        Log.i(TAG, "done: " + e.getMessage());
-                    }
-                }
-            });
-        }
+//        query.getObject(objectid, new QueryListener<Author>() {
+//            @Override
+//            public void done(Author author, BmobException e) {
+//                if(e == null){
+//                    friend = author;
+//                    Log.i(TAG, "test friend : " + friend.getName());
+//                }else {
+//                    Log.i(TAG, "test friend : " + e.getMessage());
+//                }
+//            }
+//        });
     }
 
     public void initAdapter(){
@@ -118,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
     }
 
     @Override
-    public boolean onSubmit(CharSequence input) {
+    public boolean onSubmit(final CharSequence input) {
         Log.i(TAG, "onSubmit: " + input.toString());
         adapter.addToStart(
                 new Message(
@@ -126,7 +173,40 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
                 ) ,
                 true
         );
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BmobIMTextMessage imTextMessage = new BmobIMTextMessage();
+                imTextMessage.setContent(input.toString());
+                manager.sendMessage(imTextMessage);
+            }
+        }).start();
         return true;
+    }
+
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        bmobIM.addMessageListHandler(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        bmobIM.removeMessageListHandler(this);
+    }
+
+    @Override
+    public void onMessageReceive(List<MessageEvent> list) {
+        for (MessageEvent event: list
+             ) {
+            adapter.addToStart(
+                    new Message(
+                    friend , event.getMessage().getContent()
+                            , MainActivity.this)
+            , true);
+        }
     }
 
 //    @Override

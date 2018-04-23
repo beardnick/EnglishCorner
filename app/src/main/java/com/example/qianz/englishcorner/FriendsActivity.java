@@ -14,6 +14,10 @@ import com.stfalcon.chatkit.dialogs.DialogsList;
 import com.stfalcon.chatkit.dialogs.DialogsListAdapter;
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.bmob.newim.BmobIM;
+import cn.bmob.newim.bean.BmobIMUserInfo;
+import cn.bmob.newim.listener.ConnectListener;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobPointer;
@@ -60,6 +64,19 @@ public class FriendsActivity extends AppCompatActivity {
 
     public void oninitData(){
         user = BmobUser.getCurrentUser(Author.class);
+        if(user.getObjectId().length() > 0){
+            BmobIM.connect(user.getObjectId(), new ConnectListener() {
+                @Override
+                public void done(String s, BmobException e) {
+                    if (e == null) {
+                        userInfoUtil(user);
+                        Log.i(TAG, "connect : 连接成功");
+                    }else {
+                        Log.i(TAG, "connect : " + e.getMessage());
+                    }
+                }
+            });
+        }
         Log.i(TAG, "currentUser：" + user.getObjectId() + user.getName() + user.getCreatedAt());
         BmobQuery<Friend> q1 = new BmobQuery<>();
         q1.addWhereEqualTo("user" , new BmobPointer(user));
@@ -80,8 +97,10 @@ public class FriendsActivity extends AppCompatActivity {
                          ) {
                         if(x.getUser().getObjectId().equals(user.getObjectId())){
                            dialogs.add(new MyDialog(x.getFriend()));
+                           userInfoUtil(x.getFriend());
                         }else {
                            dialogs.add(new MyDialog(x.getUser()));
+                           userInfoUtil(x.getUser());
                         }
                         Log.i(TAG, "user : "
                                 + x.getUser().getUsername() + x.getUser().getAvatar()+ "\n"
@@ -93,5 +112,13 @@ public class FriendsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void userInfoUtil(Author author){
+        BmobIMUserInfo info = new BmobIMUserInfo();
+        info.setUserId(author.getObjectId());
+        info.setName(author.getName());
+        info.setAvatar(author.getAvatar());
+        BmobIM.getInstance().updateUserInfo(info);
     }
 }
