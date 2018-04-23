@@ -40,28 +40,6 @@ public class LanguageToolUtil {
 
 
     public LanguageToolUtil() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.i(TAG, "try to connect languagetool");
-                    StringBuilder urlBuilder = new StringBuilder("");
-                    urlBuilder.append(SEVER_URL);
-                    urlBuilder.append(buildParamenter("?", "sessionID", "12352"));
-                    URL url = new URL(urlBuilder.toString());
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("POST");
-                    connection.setConnectTimeout(8000);
-                }catch (MalformedURLException e){
-                    isConnected = false;
-                    e.printStackTrace();
-                }catch (IOException e){
-                    e.printStackTrace();
-                    isConnected = false;
-                }
-                isConnected = true;
-            }
-        }).start();
     }
 
     private String buildURL(String language , String text){
@@ -90,8 +68,13 @@ public class LanguageToolUtil {
                 @Override
                 public void run() {
                     try {
-                        while(! isConnected){
-                        }
+                        Log.i(TAG, "try to connect languagetool");
+                        StringBuilder urlBuilder = new StringBuilder("");
+                        urlBuilder.append(SEVER_URL);
+                        urlBuilder.append(buildParamenter("?", "sessionID", "12352"));
+                        URL url = new URL(urlBuilder.toString());
+                        connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("POST");
                         DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
                         outputStream.writeBytes(buildURL("en", String.valueOf(message)));
                         outputStream.flush();

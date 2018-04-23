@@ -1,5 +1,6 @@
 package com.example.qianz.englishcorner;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +25,10 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import cn.bmob.newim.BmobIM;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 
 public class MainActivity extends AppCompatActivity implements MessageInput.InputListener {
 
@@ -32,12 +37,15 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
     private MessageInput input;
     private MessagesListAdapter<Message> adapter;
     private ImageLoader loader;
+    private Author user;
+    private Author friend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         onInitView();
+        oninitData();
         initAdapter();
         onInitEvent();
     }
@@ -45,6 +53,22 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
     public void onInitView(){
         messageList = (MessagesList) findViewById(R.id.message_list);
         input = (MessageInput) findViewById(R.id.input);
+    }
+
+    public void oninitData(){
+        Intent intent = getIntent();
+        BmobQuery<Author> query = new BmobQuery<>();
+        query.getObject(intent.getStringExtra("objectid"), new QueryListener<Author>() {
+            @Override
+            public void done(Author author, BmobException e) {
+                if(e == null){
+                    friend = author;
+                }else {
+                    Log.i(TAG, "done: " + e.getMessage());
+                }
+            }
+        });
+        user = BmobUser.getCurrentUser(Author.class);
     }
 
     public void initAdapter(){
@@ -57,8 +81,7 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
                 Picasso.with(MainActivity.this).load(url).into(imageView);
             }
         };
-        adapter = new MessagesListAdapter<>("1", holders, loader);
-//        adapter = new MessagesListAdapter<>("1", loader);
+        adapter = new MessagesListAdapter<>(user.getId(), holders, loader);
         messageList.setAdapter(adapter);
     }
     private void onInitEvent(){
@@ -70,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
         Log.i(TAG, "onSubmit: " + input.toString());
         adapter.addToStart(
                 new Message(
-                        new Author("0" , "Nick" , "http://i.imgur.com/R3Jm1CL.png") , input.toString() , MainActivity.this
+                        user , input.toString() , MainActivity.this
                 ) ,
                 true
         );

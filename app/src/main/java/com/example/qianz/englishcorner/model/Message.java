@@ -23,11 +23,13 @@ public class Message implements IMessage{
         this.author = author;
         this.text = text;
         this.context = activity;
+        createAt = new Date();
     }
 
     public Message(Author author, String text) {
         this.author = author;
         this.text = text;
+        createAt = new Date();
     }
 
     @Override
