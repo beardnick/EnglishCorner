@@ -1,10 +1,19 @@
 package com.example.qianz.englishcorner;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
+
 import com.example.qianz.englishcorner.model.Author;
 import com.example.qianz.englishcorner.model.Friend;
 import com.example.qianz.englishcorner.model.MyDialog;
@@ -27,6 +36,7 @@ import cn.bmob.v3.listener.FindListener;
 public class FriendsActivity extends AppCompatActivity {
 
     Author user;
+    private DrawerLayout mDrawerLayout;
     private static final String TAG = "FriendsActivity";
 
     DialogsList dialogsList;
@@ -35,11 +45,38 @@ public class FriendsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
+        Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        mDrawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
+        NavigationView navigationView =(NavigationView)findViewById(R.id.nav_view);
+        ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.more);
+        }
+        navigationView.setCheckedItem(R.id.nav_call);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                mDrawerLayout.closeDrawers();
+                return true;
+            }
+        });
         onBindView();
         initAdapter();
         oninitData();
     }
 
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.toolbar,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        Toast.makeText(this,"add friends",Toast.LENGTH_SHORT);
+        return true;
+    }
     public void onBindView(){
         dialogsList = (DialogsList) findViewById(R.id.dialog_list);
     }
