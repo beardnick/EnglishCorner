@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +39,7 @@ public class FriendsActivity extends AppCompatActivity {
     Author user;
     private DrawerLayout mDrawerLayout;
     private static final String TAG = "FriendsActivity";
+    private NavigationView navigationView;
 
     DialogsList dialogsList;
     DialogsListAdapter<MyDialog> dialogAdapter;
@@ -48,7 +50,7 @@ public class FriendsActivity extends AppCompatActivity {
         Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
-        NavigationView navigationView =(NavigationView)findViewById(R.id.nav_view);
+        navigationView =(NavigationView)findViewById(R.id.nav_view);
         ActionBar actionBar=getSupportActionBar();
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -65,6 +67,7 @@ public class FriendsActivity extends AppCompatActivity {
         onBindView();
         initAdapter();
         oninitData();
+        oninitEvent();
     }
 
     public boolean onCreateOptionsMenu(Menu menu){
@@ -157,5 +160,20 @@ public class FriendsActivity extends AppCompatActivity {
         info.setName(author.getName());
         info.setAvatar(author.getAvatar());
         BmobIM.getInstance().updateUserInfo(info);
+    }
+
+    public void oninitEvent(){
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if(item.getItemId() == R.id.log_out){
+                    user.logOut();
+                    Intent intent = new Intent(FriendsActivity.this , LoginActivity.class);
+                    startActivity(intent);
+                    FriendsActivity.this.finish();
+                }
+                return  true;
+            }
+        });
     }
 }
