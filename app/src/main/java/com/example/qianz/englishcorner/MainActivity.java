@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.qianz.englishcorner.custom.MyIncomingHolder;
 import com.example.qianz.englishcorner.custom.MyOutComingHolder;
@@ -27,6 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMConversation;
@@ -102,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
                         @Override
                         public void done(BmobIMConversation bmobIMConversation, BmobException e) {
                             if(e == null){
-
                                 Log.i(TAG, "会话连接成功");
                             }else {
                                 Log.i(TAG, "会话连接失败" + e.getMessage());
@@ -134,17 +136,6 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
                 }
             }
         });
-//        query.getObject(objectid, new QueryListener<Author>() {
-//            @Override
-//            public void done(Author author, BmobException e) {
-//                if(e == null){
-//                    friend = author;
-//                    Log.i(TAG, "test friend : " + friend.getName());
-//                }else {
-//                    Log.i(TAG, "test friend : " + e.getMessage());
-//                }
-//            }
-//        });
     }
 
     public void initAdapter(){
@@ -167,20 +158,27 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
     @Override
     public boolean onSubmit(final CharSequence input) {
         Log.i(TAG, "onSubmit: " + input.toString());
-        adapter.addToStart(
-                new Message(
-                        user , input.toString() , MainActivity.this
-                ) ,
-                true
-        );
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BmobIMTextMessage imTextMessage = new BmobIMTextMessage();
-                imTextMessage.setContent(input.toString());
-                manager.sendMessage(imTextMessage);
-            }
-        }).start();
+        //判断不能含有中文
+        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+        Matcher m = p.matcher(input.toString());
+        if(! m.find()) {
+            adapter.addToStart(
+                    new Message(
+                            user, input.toString(), MainActivity.this
+                    ),
+                    true
+            );
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    BmobIMTextMessage imTextMessage = new BmobIMTextMessage();
+                    imTextMessage.setContent(input.toString());
+                    manager.sendMessage(imTextMessage);
+                }
+            }).start();
+        }else{
+            Toast.makeText(MainActivity.this, "Chinese is not allowed", Toast.LENGTH_SHORT).show();
+        }
         return true;
     }
 
