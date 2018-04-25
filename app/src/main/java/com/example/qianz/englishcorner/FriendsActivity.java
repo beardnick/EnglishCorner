@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,10 +52,14 @@ public class FriendsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         mDrawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
         navigationView =(NavigationView)findViewById(R.id.nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(FriendsActivity.this ,
+               mDrawerLayout , toolbar , R.string.drawer_open , R.string.drawer_close );
+        toggle.syncState();
+        mDrawerLayout.setDrawerListener(toggle);
         ActionBar actionBar=getSupportActionBar();
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.more1);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
         }
         navigationView.setCheckedItem(R.id.nav_call);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
