@@ -54,7 +54,7 @@ public class FriendsActivity extends AppCompatActivity {
         ActionBar actionBar=getSupportActionBar();
         if(actionBar!=null){
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.more);
+            actionBar.setHomeAsUpIndicator(R.drawable.more1);
         }
         navigationView.setCheckedItem(R.id.nav_call);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
