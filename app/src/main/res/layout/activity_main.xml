@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.qianz.englishcorner.MainActivity">
+    tools:context="com.example.qianz.englishcorner.View.MainActivity">
 
     <com.stfalcon.chatkit.messages.MessagesList
         android:id="@+id/message_list"

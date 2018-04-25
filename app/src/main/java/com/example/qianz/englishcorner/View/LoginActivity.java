@@ -1,4 +1,4 @@
-package com.example.qianz.englishcorner;
+package com.example.qianz.englishcorner.View;
 
 import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.qianz.englishcorner.R;
 import com.example.qianz.englishcorner.model.Author;
 import com.example.qianz.englishcorner.util.MessageHandler;
 
@@ -17,7 +18,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import cn.bmob.newim.BmobIM;
-import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
@@ -25,6 +25,9 @@ import shem.com.materiallogin.DefaultLoginView;
 import shem.com.materiallogin.DefaultRegisterView;
 import shem.com.materiallogin.MaterialLoginView;
 
+/**
+ * 登陆注册界面
+ */
 public class LoginActivity extends AppCompatActivity {
 
     MaterialLoginView loginView;
@@ -34,18 +37,25 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        initBmob();
-        onBindView();
+        onInitBmob();
+        onInitView();
         oninitEvent();
     }
 
-    public void initBmob(){
+    /**
+     * 初始化Bmob的即时通讯服务
+     */
+    public void onInitBmob(){
         if(getApplicationInfo().packageName.equals(getProcessName())){
             BmobIM.init(LoginActivity.this);
             BmobIM.registerDefaultMessageHandler(new MessageHandler());
         }
     }
 
+    /**
+     * 得到程序运行的线程名，为Bmob的即时通讯包做准备
+     * @return 运行的线程名
+     */
     public static String getProcessName(){
         File file = new File("/proc/" + android.os.Process.myPid() + "/" + "cmdline");
         try {
@@ -62,7 +72,11 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void onBindView(){
+    /**
+     * 初始化登陆视图
+     * 如果已经登陆过则跳过登陆界面
+     */
+    public void onInitView(){
         BmobUser user = BmobUser.getCurrentUser();
         if (user != null) {
            Intent intent = new Intent(LoginActivity.this , FriendsActivity.class);
@@ -73,6 +87,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * 设置登陆和注册事件的监听者
+     */
     public void oninitEvent(){
         ((DefaultLoginView)loginView.getLoginView()).setListener(new DefaultLoginView.DefaultLoginViewListener() {
             @Override
@@ -144,6 +161,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 用于获取TextInputLayout中的数据的工具方法
+     * @param input 需要被获取内容的TextInputLayout
+     * @return TextInputLayout的内容，以字符串形式返回
+     */
     public String stringUtil(TextInputLayout input){
         return String.valueOf(input.getEditText().getText());
     }

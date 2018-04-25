@@ -1,4 +1,4 @@
-package com.example.qianz.englishcorner.util;
+package com.example.qianz.englishcorner.custom;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,21 +10,29 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.qianz.englishcorner.R;
+import com.example.qianz.englishcorner.model.Suggestion;
 
 /**
  * Created by qianz on 2018/4/21.
  */
 
-public class SuggestSpan extends ClickableSpan {
+/**
+ * 显示建议的Spanable
+ */
+public class SuggestionSpan extends ClickableSpan {
 
     private Context context;
     private Suggestion suggestion;
 
-    public SuggestSpan(Context context, Suggestion suggestion) {
+    public SuggestionSpan(Context context, Suggestion suggestion) {
         this.context = context;
         this.suggestion = suggestion;
     }
 
+    /**
+     * 点击时显示建议
+     * @param view 所在的view
+     */
     @Override
     public void onClick(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

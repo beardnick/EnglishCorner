@@ -12,10 +12,22 @@ import java.util.Date;
  * Created by qianz on 2018/4/20.
  */
 
+/**
+ * 消息类
+ */
 public class Message implements IMessage{
 
+    /**
+     * 发消息的人
+     */
     private Author author;
+    /**
+     * 消息内容
+     */
     private String text;
+    /**
+     * 消息创建时间
+     */
     private Date createAt;
     private Activity context;
 

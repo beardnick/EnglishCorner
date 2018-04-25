@@ -1,4 +1,4 @@
-package com.example.qianz.englishcorner;
+package com.example.qianz.englishcorner.View;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -11,11 +11,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.example.qianz.englishcorner.R;
 import com.example.qianz.englishcorner.model.Author;
 import com.example.qianz.englishcorner.model.Friend;
 import com.example.qianz.englishcorner.model.MyDialog;
@@ -35,6 +35,9 @@ import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 
+/**
+ * 朋友界面
+ */
 public class FriendsActivity extends AppCompatActivity {
 
     Author user;
@@ -48,28 +51,7 @@ public class FriendsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
-        Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        mDrawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
-        navigationView =(NavigationView)findViewById(R.id.nav_view);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(FriendsActivity.this ,
-               mDrawerLayout , toolbar , R.string.drawer_open , R.string.drawer_close );
-        toggle.syncState();
-        mDrawerLayout.setDrawerListener(toggle);
-        ActionBar actionBar=getSupportActionBar();
-        if(actionBar!=null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        }
-        navigationView.setCheckedItem(R.id.nav_call);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                mDrawerLayout.closeDrawers();
-                return true;
-            }
-        });
-        onBindView();
+        onInitView();
         initAdapter();
         oninitData();
         oninitEvent();
@@ -85,10 +67,38 @@ public class FriendsActivity extends AppCompatActivity {
         Toast.makeText(this,"add friends",Toast.LENGTH_SHORT);
         return true;
     }
-    public void onBindView(){
+
+    /**
+     * 初始化UI组件
+     */
+    public void onInitView(){
         dialogsList = (DialogsList) findViewById(R.id.dialog_list);
+        Toolbar toolbar=(Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        mDrawerLayout =(DrawerLayout)findViewById(R.id.drawer_layout);
+        navigationView =(NavigationView)findViewById(R.id.nav_view);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(FriendsActivity.this ,
+                mDrawerLayout , toolbar , R.string.drawer_open , R.string.drawer_close );
+        toggle.syncState();
+        mDrawerLayout.setDrawerListener(toggle);
+        ActionBar actionBar=getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        }
+        navigationView.setCheckedItem(R.id.nav_call);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                mDrawerLayout.closeDrawers();
+                return true;
+            }
+        });
     }
 
+    /**
+     * 初始化朋友列表的的适配器
+     */
     public void initAdapter(){
         dialogAdapter = new DialogsListAdapter<MyDialog>(new ImageLoader() {
             @Override
@@ -107,6 +117,9 @@ public class FriendsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 查询朋友列表数据
+     */
     public void oninitData(){
         user = BmobUser.getCurrentUser(Author.class);
         if(user.getObjectId().length() > 0){
@@ -159,6 +172,10 @@ public class FriendsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 将用户登陆信息和朋友信息暂存到本地
+     * @param author 用户或用户的朋友
+     */
     public void userInfoUtil(Author author){
         BmobIMUserInfo info = new BmobIMUserInfo();
         info.setUserId(author.getObjectId());
@@ -167,6 +184,9 @@ public class FriendsActivity extends AppCompatActivity {
         BmobIM.getInstance().updateUserInfo(info);
     }
 
+    /**
+     * 设置UI组件的事件监听者
+     */
     public void oninitEvent(){
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override

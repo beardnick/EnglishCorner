@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 public class MyDialog implements IDialog {
 
-    // TODO: 2018/4/22 完成dialog的数据操作
     private static final String TAG = "MyDialog";
 
     private Author friend;
@@ -30,6 +29,7 @@ public class MyDialog implements IDialog {
     public void setFriend(Author friend) {
         this.friend = friend;
     }
+
 
     @Override
     public String getId() {

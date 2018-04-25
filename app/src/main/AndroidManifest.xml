@@ -38,15 +38,15 @@
             android:name="Bmob_APP_KEY"
             android:value="f24de67fcc9a6a61f657dbaffd12c931" />
 
-        <activity android:name=".MainActivity"></activity>
-        <activity android:name=".LoginActivity">
+        <activity android:name=".View.MainActivity"></activity>
+        <activity android:name=".View.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FriendsActivity"></activity>
+        <activity android:name=".View.FriendsActivity"></activity>
         <receiver android:name="cn.bmob.newim.core.ConnectChangeReceiver" >
             <intent-filter>
                 <action android:name="cn.bmob.action.RECONNECT" />

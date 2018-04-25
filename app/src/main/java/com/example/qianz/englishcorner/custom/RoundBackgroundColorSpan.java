@@ -1,4 +1,4 @@
-package com.example.qianz.englishcorner.util;
+package com.example.qianz.englishcorner.custom;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,10 +12,22 @@ import android.text.style.ReplacementSpan;
  * Created by qianz on 2018/4/20.
  */
 
+/**
+ * 为字符串加入圆角矩形背景的Spannable
+ */
 public class RoundBackgroundColorSpan extends ReplacementSpan {
 
+    /**
+     * 背景颜色
+     */
     private int backColor;
+    /**
+     * 文字颜色
+     */
     private int textColor;
+    /**
+     * 圆角矩形边缘的圆的半径
+     */
     private int radius = 10;
     private int size;
 
@@ -24,6 +36,11 @@ public class RoundBackgroundColorSpan extends ReplacementSpan {
         backColor = Color.parseColor("#CD0000");
     }
 
+    /**
+     * 构造特定样式的背景
+     * @param backColor 背景色
+     * @param textColor 文字色
+     */
     public RoundBackgroundColorSpan(int backColor, int textColor) {
         this.backColor = backColor;
         this.textColor = textColor;

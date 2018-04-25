@@ -1,18 +1,17 @@
-package com.example.qianz.englishcorner;
+package com.example.qianz.englishcorner.View;
 
 import android.content.Intent;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.qianz.englishcorner.custom.MyIncomingHolder;
-import com.example.qianz.englishcorner.custom.MyOutComingHolder;
+import com.example.qianz.englishcorner.R;
+import com.example.qianz.englishcorner.util.MyIncomingHolder;
+import com.example.qianz.englishcorner.util.MyOutComingHolder;
 import com.example.qianz.englishcorner.model.Author;
 import com.example.qianz.englishcorner.model.Message;
-import com.example.qianz.englishcorner.util.MessageHandler;
 import com.squareup.picasso.Picasso;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.messages.MessageHolders;
@@ -20,11 +19,6 @@ import com.stfalcon.chatkit.messages.MessageInput;
 import com.stfalcon.chatkit.messages.MessagesList;
 import com.stfalcon.chatkit.messages.MessagesListAdapter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,20 +29,21 @@ import cn.bmob.newim.BmobIM;
 import cn.bmob.newim.bean.BmobIMConversation;
 import cn.bmob.newim.bean.BmobIMMessage;
 import cn.bmob.newim.bean.BmobIMTextMessage;
-import cn.bmob.newim.bean.BmobIMUserInfo;
 import cn.bmob.newim.core.BmobIMClient;
 import cn.bmob.newim.event.MessageEvent;
-import cn.bmob.newim.listener.ConnectListener;
 import cn.bmob.newim.listener.ConversationListener;
 import cn.bmob.newim.listener.MessageListHandler;
 import cn.bmob.newim.listener.MessagesQueryListener;
-import cn.bmob.v3.BmobInstallation;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
 
+/**
+ * 聊天界面
+ */
 public class MainActivity extends AppCompatActivity implements MessageInput.InputListener , MessageListHandler {
+
 
     private static final String TAG = "MainActivity";
     private MessagesList messageList;
@@ -60,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
     private final BmobIM bmobIM = BmobIM.getInstance();
     private BmobIMConversation manager;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,21 +68,17 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
         onInitEvent();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        BmobIM bmobIM = BmobIM.getInstance();
-//        BmobIMConversation conversation = bmobIM.startPrivateConversation(bmobIM.getUserInfo(friend.getObjectId()) , false ,null);
-//        BmobIMConversation manager = BmobIMConversation.obtain(BmobIMClient.getInstance() , conversation);
-//        manager.getConversationIcon();
-
-    }
-
+    /**
+     * 初始化聊天界面的ui组件
+     */
     public void onInitView(){
         messageList = (MessagesList) findViewById(R.id.message_list);
         input = (MessageInput) findViewById(R.id.input);
     }
 
+    /**
+     * 加载消息列表，用户信息
+     */
     public void oninitData(){
         user = BmobUser.getCurrentUser(Author.class);
         Intent intent = getIntent();
@@ -138,6 +132,11 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
         });
     }
 
+    /**
+     *初始化消息列表的适配器
+     * 给适配器传入自定义的MessageHolders，用于自定义消息的显示方式
+     * 给适配器传入自定义的图片加载器，用于加载网络图片
+     */
     public void initAdapter(){
         MessageHolders holders = new MessageHolders()
                 .setIncomingTextHolder(MyIncomingHolder.class)
@@ -151,6 +150,10 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
         adapter = new MessagesListAdapter<>(user.getId(), holders, loader);
         messageList.setAdapter(adapter);
     }
+
+    /**
+     * 设置特定的事件监听者
+     */
     private void onInitEvent(){
         input.setInputListener(this);
     }
@@ -183,11 +186,18 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
     }
 
 
+    /**
+     * 注册消息接收器，用于实时接收消息
+     */
     @Override
     protected void onPostResume() {
         super.onPostResume();
         bmobIM.addMessageListHandler(this);
     }
+
+    /**
+     * 移除消息接收器，避免系统资源浪费和系统崩溃
+     */
 
     @Override
     protected void onPause() {
@@ -195,6 +205,10 @@ public class MainActivity extends AppCompatActivity implements MessageInput.Inpu
         bmobIM.removeMessageListHandler(this);
     }
 
+    /**
+     * 接收到消息的回调方法
+     * @param list 消息列表
+     */
     @Override
     public void onMessageReceive(List<MessageEvent> list) {
         for (MessageEvent event: list
